@@ -3,41 +3,71 @@ package com.example.simpleclicker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.invalidateGroupsWithKey
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.simpleclicker.ui.theme.SimpleClickerTheme
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.simpleclicker.viewmodels.ClickerViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+
         setContent {
+            val viewModel: ClickerViewModel = viewModel()
+            Main(viewModel)
+        }
+//        setContent {
+//
+//            Column (
+//                modifier = Modifier
+//                    .fillMaxSize(),
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//
+//            )
+//            {
+//                Text(text = "You have the value of clicks!")
+//                Spacer(Modifier.height(50.dp))
+//                Button({}) {
+//                    Text("Click Me")
+//                }
+//            }
+//        }
+    }
+}
 
-            Text(text = "",textAlign = TextAlign.Center)
+@Composable
+fun Main(viewModel: ClickerViewModel = viewModel()){
+    //собираем статы из Flow в State чтобы использовать в UI
+    val stats = viewModel.stats.collectAsStateWithLifecycle()
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button({}) {
-                    Text("Click Me")
-                }
-            }
-
-
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    )
+    {
+        Text(text = "You have the value ${stats.value.clicks} of clicks!")
+        Spacer(Modifier.height(50.dp))
+        Button({viewModel.addClick()}) {
+            Text("Click Me")
         }
     }
 }

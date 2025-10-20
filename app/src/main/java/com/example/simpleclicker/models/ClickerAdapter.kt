@@ -1,7 +1,9 @@
-package com.example.simpleclicker.models
-
-class ClickerAdapter {
-    private var clicks: Int = 0
-    private var powerOfClick: Int = 1
-
-}
+//package com.example.simpleclicker.models
+//
+//
+//class ClickerAdapter {
+//
+//    public fun addClick( oldClicks: Int, powerOfClick: Int): Int{
+//        return oldClicks + powerOfClick
+//    }
+//}
