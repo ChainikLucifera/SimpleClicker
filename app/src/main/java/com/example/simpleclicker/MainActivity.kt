@@ -5,10 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -32,30 +32,13 @@ class MainActivity : ComponentActivity() {
             val viewModel: ClickerViewModel = viewModel()
             Main(viewModel)
         }
-//        setContent {
-//
-//            Column (
-//                modifier = Modifier
-//                    .fillMaxSize(),
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//
-//            )
-//            {
-//                Text(text = "You have the value of clicks!")
-//                Spacer(Modifier.height(50.dp))
-//                Button({}) {
-//                    Text("Click Me")
-//                }
-//            }
-//        }
     }
 }
 
 @Composable
 fun Main(viewModel: ClickerViewModel = viewModel()){
     //собираем статы из Flow в State чтобы использовать в UI
-    val stats = viewModel.stats.collectAsStateWithLifecycle()
+    val stats = viewModel.state.collectAsStateWithLifecycle()
 
     Column (
         modifier = Modifier
@@ -65,9 +48,23 @@ fun Main(viewModel: ClickerViewModel = viewModel()){
     )
     {
         Text(text = "You have the value ${stats.value.clicks} of clicks!")
+
         Spacer(Modifier.height(50.dp))
+
         Button({viewModel.addClick()}) {
             Text("Click Me")
+        }
+        Row()
+        {
+            Button({viewModel.addPower()}) {
+                Text("Upgrade power")
+            }
+
+            Spacer(Modifier.width(50.dp))
+
+            Button({viewModel.addClick()}) {
+                Text("Click Me2")
+            }
         }
     }
 }
