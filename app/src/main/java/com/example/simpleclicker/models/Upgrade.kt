@@ -4,7 +4,8 @@ import kotlin.math.roundToInt
 
 class Upgrade(private val baseCost: Int,
               val upgradePower: Int,
-              val isPassive: Boolean) {
+              val isPassive: Boolean,
+              val name: String) {
 
     private var lvl = 1
     var currentCost = baseCost
