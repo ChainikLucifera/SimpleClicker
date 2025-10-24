@@ -1,6 +1,7 @@
 package com.example.simpleclicker
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +20,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simpleclicker.viewmodels.ClickerViewModel
@@ -35,15 +41,26 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val viewModel: ClickerViewModel = viewModel()
+            val localContext = LocalContext.current
+            val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(Unit){
+                viewModel.showToastEvent.observe(lifecycleOwner){ message ->
+                    Toast.makeText(localContext, "$message", Toast.LENGTH_SHORT).show()
+                }
+            }
+
             Main(viewModel)
         }
+
     }
 }
 
 @Composable
 fun Main(viewModel: ClickerViewModel = viewModel()) {
     //собираем статы из Flow в State чтобы использовать в UI
-    val stats = viewModel.state.collectAsStateWithLifecycle()
+    val stats = viewModel.clickerState.collectAsStateWithLifecycle()
+    val upgradeState = viewModel.upgradeState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -61,6 +78,17 @@ fun Main(viewModel: ClickerViewModel = viewModel()) {
         }
         Row()
         {
+            LazyColumn(modifier = Modifier
+                .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,) {
+                items(viewModel.getPowerUpgradesNumber()){ index ->
+                    Button(onClick = {viewModel.buttonPressed(index)}) {
+                        Text("${upgradeState.value.currentCost[index]}")
+                    }
+                }
+            }
+
             Column(modifier = Modifier
                 .weight(1f),
                 verticalArrangement = Arrangement.Center,
@@ -70,14 +98,7 @@ fun Main(viewModel: ClickerViewModel = viewModel()) {
 //            Button({viewModel.addPower()}) {
 //                Text("Upgrade power")
 //            }
-            LazyColumn(modifier = Modifier
-                .weight(1f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,) {
-                items(){
 
-                }
-            }
 //            Spacer(Modifier.width(50.dp))
 //
 //            Button({ viewModel.addClick() }) {

@@ -7,7 +7,7 @@ class Upgrade(private val baseCost: Int,
               val isPassive: Boolean,
               val name: String) {
 
-    private var lvl = 1
+    var lvl = 1
     var currentCost = baseCost
 
     fun lvlUp(){
